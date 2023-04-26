@@ -18,6 +18,7 @@ public class CsvTransactionDAO implements ITransactionDAO {
             String csvLine = transaction.getDate() + "," + transaction.getGrossRevenue() + "," + transaction.getTax() + "\n";
             writer.write(csvLine);
             writer.close();
+            System.out.println("Transaction saved");
         } catch (IOException e) {
             System.out.println("Erreur lors de l'enregistrement de la transaction: " + e.getMessage());
         }

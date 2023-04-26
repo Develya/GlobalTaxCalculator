@@ -1,15 +1,28 @@
 package dev.paintilya.globaltaxcalculator.FEL;
 
-import dev.paintilya.globaltaxcalculator.BLL.Control.GlobalTaxController;
-import dev.paintilya.globaltaxcalculator.DAL.CsvTransactionDAO;
-
-import java.util.Map;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Scanner;
 
 
 public class AppConsoleDriver {
     public static void main(String[] args) {
-        GlobalTaxController globalTaxController = new GlobalTaxController(new CsvTransactionDAO("/home/kiyranya/IdeaProjects/TaxCalculator/GlobalTaxCalculator/src/main/resources/transactions.csv"));
-        Map<String, Double> response = globalTaxController.calculateGlobalTax(50000);
-        response.forEach((key, value) -> System.out.println(key + ": " + value));
+        Scanner in = new Scanner(System.in);
+        Double input = in.nextDouble();
+
+        String uri = "http://localhost:8083/api/v1/gtc/calculate?netIncome=" + input;
+        HttpClient client = HttpClient.newHttpClient();
+        try {
+            HttpRequest request = HttpRequest.newBuilder(URI.create(uri)).build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                System.out.println(response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
